@@ -3,7 +3,10 @@ import { createDatabase } from './src/database.js';
 import { createViaCepClient } from './src/viacep.js';
 
 const port = Number(process.env.PORT) || 3001;
-const database = createDatabase({ seed: process.env.SEED_DATABASE !== 'false' });
+const database = createDatabase({
+  filename: process.env.DATABASE_PATH,
+  seed: process.env.SEED_DATABASE !== 'false',
+});
 const viaCep = createViaCepClient({
   timeoutMs: Number(process.env.VIACEP_TIMEOUT_MS) || 4000,
 });
