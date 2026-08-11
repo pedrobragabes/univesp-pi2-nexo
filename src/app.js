@@ -94,6 +94,8 @@ export function createApp({ database, viaCep }) {
     next();
   });
 
+  app.get('/health', (req, res) => res.json({ status: 'ok', service: 'nexo' }));
+
   app.get('/', (req, res) => {
     res.render('index', {
       title: 'Serviços locais, em um só lugar',
