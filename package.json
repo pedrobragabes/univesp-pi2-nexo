@@ -1,0 +1,20 @@
+{
+  "name": "pi2-nexo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PI II - catálogo acessível de serviços e iniciativas locais com integração externa",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch server.js",
+    "start": "node server.js",
+    "test": "node --test",
+    "check": "node --check server.js && node --check src/app.js && node --check src/database.js && node --check src/viacep.js && node --check public/app.js"
+  },
+  "engines": {
+    "node": ">=22.5"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.1.0"
+  }
+}

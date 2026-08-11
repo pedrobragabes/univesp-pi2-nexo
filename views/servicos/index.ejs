@@ -1,0 +1,68 @@
+<%- include('../partials/header') %>
+
+<section class="page-hero">
+  <div class="shell">
+    <p class="eyebrow">Diretório local</p>
+    <h1 class="page-title">Explorar serviços</h1>
+    <p class="page-intro">Pesquise por nome, atividade ou bairro. Use os filtros para reduzir a lista sem perder o contexto da busca.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell">
+    <form class="filter-panel" action="/servicos" method="get" role="search">
+      <div class="form-grid">
+        <div class="field field-full">
+          <label for="busca">O que você procura?</label>
+          <input id="busca" name="busca" value="<%= filters.busca %>" placeholder="Ex.: biblioteca, feira, Centro">
+        </div>
+        <div class="field">
+          <label for="categoria">Categoria</label>
+          <select id="categoria" name="categoria">
+            <option value="">Todas as categorias</option>
+            <% for (const category of categories) { %>
+              <option value="<%= category %>" <%= filters.categoria === category ? 'selected' : '' %>><%= category %></option>
+            <% } %>
+          </select>
+        </div>
+        <div class="field">
+          <label for="cidade">Cidade</label>
+          <select id="cidade" name="cidade">
+            <option value="">Todas as cidades</option>
+            <% for (const city of cities) { %>
+              <option value="<%= city %>" <%= filters.cidade === city ? 'selected' : '' %>><%= city %></option>
+            <% } %>
+          </select>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="button" type="submit">Aplicar filtros</button>
+        <a class="button button-secondary" href="/servicos">Limpar</a>
+      </div>
+    </form>
+
+    <div class="section-head">
+      <h2><%= items.length %> <%= items.length === 1 ? 'resultado' : 'resultados' %></h2>
+    </div>
+    <% if (items.length) { %>
+      <div class="card-grid">
+        <% for (const item of items) { %>
+          <article class="service-card">
+            <span class="tag <%= item.verificado ? 'verified' : '' %>"><%= item.categoria %></span>
+            <h3><%= item.nome %></h3>
+            <p><%= item.descricao %></p>
+            <p class="meta"><%= item.bairro %> · <%= item.cidade %>/<%= item.uf %></p>
+            <a class="card-link" href="/servicos/<%= item.id %>">Abrir serviço →</a>
+          </article>
+        <% } %>
+      </div>
+    <% } else { %>
+      <div class="empty">
+        <h2>Nenhum ponto encontrado</h2>
+        <p>Tente retirar um filtro ou <a href="/servicos/novo">sugira um serviço</a> para análise.</p>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

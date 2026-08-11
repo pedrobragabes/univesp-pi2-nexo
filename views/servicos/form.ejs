@@ -1,0 +1,100 @@
+<%- include('../partials/header') %>
+
+<section class="page-hero">
+  <div class="shell">
+    <p class="eyebrow">Colabore com o guia</p>
+    <h1 class="page-title">Sugerir serviço</h1>
+    <p class="page-intro">Nesta versão acadêmica, a sugestão entra como não verificada. Não informe dados pessoais que não sejam necessários para apresentar o serviço.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell">
+    <form class="form-card" action="/servicos" method="post">
+      <% if (errors.length) { %>
+        <div role="alert" aria-labelledby="erros-titulo">
+          <h2 id="erros-titulo">Revise os campos</h2>
+          <ul class="error-list"><% for (const error of errors) { %><li><%= error %></li><% } %></ul>
+        </div>
+      <% } %>
+
+      <div class="form-grid">
+        <div class="field field-full">
+          <label for="nome">Nome do serviço ou iniciativa</label>
+          <input id="nome" name="nome" maxlength="100" required value="<%= item.nome || '' %>">
+        </div>
+        <div class="field field-full">
+          <label for="descricao">Descrição</label>
+          <textarea id="descricao" name="descricao" minlength="20" maxlength="1000" required><%= item.descricao || '' %></textarea>
+          <span class="hint">Explique o que oferece e para quem, sem linguagem promocional enganosa.</span>
+        </div>
+        <div class="field">
+          <label for="categoria">Categoria</label>
+          <select id="categoria" name="categoria" required>
+            <option value="">Selecione</option>
+            <% for (const category of categories) { %><option value="<%= category %>" <%= item.categoria === category ? 'selected' : '' %>><%= category %></option><% } %>
+          </select>
+        </div>
+        <div class="field">
+          <label for="cep">CEP</label>
+          <div class="inline-field">
+            <input id="cep" name="cep" inputmode="numeric" autocomplete="postal-code" required data-cep value="<%= item.cep || '' %>">
+            <button class="button button-secondary" type="button" data-cep-lookup>Consultar</button>
+          </div>
+          <p class="status-message" aria-live="polite" data-cep-status></p>
+        </div>
+        <div class="field field-full">
+          <label for="logradouro">Logradouro</label>
+          <input id="logradouro" name="logradouro" maxlength="150" autocomplete="street-address" required value="<%= item.logradouro || '' %>">
+        </div>
+        <div class="field">
+          <label for="numero">Número</label>
+          <input id="numero" name="numero" maxlength="20" value="<%= item.numero || '' %>">
+        </div>
+        <div class="field">
+          <label for="complemento">Complemento</label>
+          <input id="complemento" name="complemento" maxlength="100" value="<%= item.complemento || '' %>">
+        </div>
+        <div class="field">
+          <label for="bairro">Bairro</label>
+          <input id="bairro" name="bairro" maxlength="100" required value="<%= item.bairro || '' %>">
+        </div>
+        <div class="field">
+          <label for="cidade">Cidade</label>
+          <input id="cidade" name="cidade" maxlength="100" autocomplete="address-level2" required value="<%= item.cidade || '' %>">
+        </div>
+        <div class="field">
+          <label for="uf">UF</label>
+          <input id="uf" name="uf" minlength="2" maxlength="2" autocomplete="address-level1" required value="<%= item.uf || '' %>">
+        </div>
+        <div class="field">
+          <label for="telefone">Telefone público</label>
+          <input id="telefone" name="telefone" maxlength="30" autocomplete="tel" value="<%= item.telefone || '' %>">
+        </div>
+        <div class="field field-full">
+          <label for="site">Site</label>
+          <input id="site" name="site" type="url" placeholder="https://" value="<%= item.site || '' %>">
+        </div>
+        <div class="field field-full">
+          <label for="horario">Horário de funcionamento</label>
+          <textarea id="horario" name="horario" maxlength="300" required><%= item.horario || '' %></textarea>
+        </div>
+        <div class="field field-full">
+          <label for="acessibilidade">Informações de acessibilidade</label>
+          <textarea id="acessibilidade" name="acessibilidade" maxlength="500"><%= item.acessibilidade || '' %></textarea>
+          <span class="hint">Descreva apenas condições verificadas; não use “totalmente acessível” sem critérios.</span>
+        </div>
+        <div class="field field-full">
+          <label for="fonte">Origem das informações</label>
+          <input id="fonte" name="fonte" maxlength="200" required value="<%= item.fonte || '' %>" placeholder="Ex.: entrevista com responsável em 10/08/2026">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="button" type="submit">Enviar para o catálogo</button>
+        <a class="button button-secondary" href="/servicos">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

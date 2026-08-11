@@ -1,0 +1,70 @@
+<%- include('partials/header') %>
+
+<section class="hero">
+  <div class="shell hero-grid">
+    <div data-reveal>
+      <p class="eyebrow">Guia local experimental</p>
+      <h1>O que você procura pode estar <em>logo ali.</em></h1>
+      <p class="hero-copy">Encontre iniciativas, serviços e pequenos negócios do território em um catálogo que mostra endereço, horário, acessibilidade e origem das informações.</p>
+      <div class="hero-actions">
+        <a class="button" href="/servicos">Explorar o catálogo</a>
+        <a class="button button-secondary" href="/servicos/novo">Sugerir um local</a>
+      </div>
+    </div>
+    <aside class="edition-card" data-reveal aria-label="Nota sobre esta versão">
+      <p class="eyebrow">Edição piloto</p>
+      <strong>Um mapa começa com boas referências.</strong>
+      <p>Esta versão demonstra a proposta com registros fictícios. O recorte territorial e as fontes reais serão definidos com a comunidade parceira.</p>
+    </aside>
+  </div>
+</section>
+
+<section class="stats" aria-label="Resumo do catálogo">
+  <div class="shell stats-grid">
+    <div class="stat"><strong><%= indicators.total %></strong><span>serviços</span></div>
+    <div class="stat"><strong><%= indicators.categorias %></strong><span>categorias</span></div>
+    <div class="stat"><strong><%= indicators.cidades %></strong><span>cidades piloto</span></div>
+    <div class="stat"><strong><%= indicators.verificados %></strong><span>marcados como verificados</span></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Seleção da edição</p>
+        <h2>Boas pistas para começar</h2>
+      </div>
+      <p>Os registros abaixo são demonstrações acadêmicas. A verificação real exigirá responsável, data e procedimento de curadoria.</p>
+    </div>
+    <div class="card-grid">
+      <% for (const item of featured) { %>
+        <article class="service-card" data-reveal>
+          <span class="tag <%= item.verificado ? 'verified' : '' %>"><%= item.verificado ? 'Verificação demonstrada' : 'Aguardando curadoria' %></span>
+          <h3><%= item.nome %></h3>
+          <p><%= item.descricao %></p>
+          <p class="meta"><%= item.bairro %> · <%= item.cidade %>/<%= item.uf %></p>
+          <a class="card-link" href="/servicos/<%= item.id %>">Ver informações →</a>
+        </article>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell">
+    <div class="section-head">
+      <div>
+        <p class="eyebrow">Por interesse</p>
+        <h2>Escolha uma categoria</h2>
+      </div>
+    </div>
+    <div class="category-strip">
+      <% for (const category of categorySummary) { %>
+        <a class="category-chip" href="/servicos?categoria=<%= encodeURIComponent(category.categoria) %>"><%= category.categoria %> · <%= category.total %></a>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

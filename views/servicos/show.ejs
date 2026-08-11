@@ -1,0 +1,42 @@
+<%- include('../partials/header') %>
+
+<section class="page-hero">
+  <div class="shell">
+    <p class="eyebrow"><%= item.categoria %></p>
+    <h1 class="page-title"><%= item.nome %></h1>
+    <p class="page-intro"><%= item.descricao %></p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="shell">
+    <% if (sent) { %><div class="notice" role="status"><strong>Sugestão registrada.</strong> Nesta demonstração ela aparece imediatamente, mas continua marcada como não verificada.</div><% } %>
+    <div class="detail-layout">
+      <article class="detail-card">
+        <h2>Informações práticas</h2>
+        <dl class="fact-list">
+          <div class="fact"><dt>Endereço</dt><dd><%= item.logradouro %><%= item.numero ? `, ${item.numero}` : '' %><%= item.complemento ? ` — ${item.complemento}` : '' %><br><%= item.bairro %>, <%= item.cidade %>/<%= item.uf %> · CEP <%= formatCep(item.cep) %></dd></div>
+          <div class="fact"><dt>Horário</dt><dd><%= item.horario %></dd></div>
+          <div class="fact"><dt>Telefone</dt><dd><%= item.telefone || 'Não informado' %></dd></div>
+          <div class="fact"><dt>Site</dt><dd><% if (item.site) { %><a href="<%= item.site %>" rel="noopener noreferrer"><%= item.site %></a><% } else { %>Não informado<% } %></dd></div>
+        </dl>
+        <h2>Acessibilidade</h2>
+        <p><%= item.acessibilidade || 'Ainda não há informações verificadas sobre acessibilidade.' %></p>
+      </article>
+      <aside>
+        <div class="notice">
+          <span class="tag <%= item.verificado ? 'verified' : '' %>"><%= item.verificado ? 'Verificação demonstrada' : 'Não verificado' %></span>
+          <h2>De onde veio?</h2>
+          <p><%= item.fonte %></p>
+          <p class="meta">Incluído em <%= formatDate(item.created_at) %>.</p>
+        </div>
+        <div class="prose-card">
+          <h2>Encontrou algo incorreto?</h2>
+          <p>O fluxo de correção e a responsabilidade pela curadoria serão definidos com a organização parceira antes do uso real.</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

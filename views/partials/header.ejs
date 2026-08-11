@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Nexo: catálogo acessível de serviços e iniciativas locais.">
+  <title><%= title %> | Nexo</title>
+  <link rel="stylesheet" href="/styles.css?v=0.1.1">
+  <script src="/app.js?v=0.1.1" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a class="brand" href="/" aria-label="Nexo, página inicial">
+        <span class="brand-mark" aria-hidden="true">NX</span>
+        <span>Nexo</span>
+      </a>
+      <nav class="nav" aria-label="Navegação principal">
+        <a href="/" <%= path === '/' ? 'aria-current="page"' : '' %>>Início</a>
+        <a href="/servicos" <%= path.startsWith('/servicos') && path !== '/servicos/novo' ? 'aria-current="page"' : '' %>>Explorar</a>
+        <a href="/sobre" <%= path === '/sobre' ? 'aria-current="page"' : '' %>>Sobre</a>
+        <a class="nav-cta" href="/servicos/novo" <%= path === '/servicos/novo' ? 'aria-current="page"' : '' %>>Sugerir serviço</a>
+      </nav>
+    </div>
+  </header>
+  <main id="conteudo">
