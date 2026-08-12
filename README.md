@@ -32,7 +32,7 @@ O **Nexo** é um protótipo de catálogo acessível para descoberta de serviços
 Requer Node.js 22.5 ou superior. Após clonar o repositório e entrar em sua pasta:
 
 ```powershell
-npm install
+npm ci
 npm start
 ```
 
