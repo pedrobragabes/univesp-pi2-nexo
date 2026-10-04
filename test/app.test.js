@@ -98,3 +98,17 @@ test('proxy de CEP valida formato, sucesso e ausência', () => withServer(async 
   const missing = await fetch(`${baseUrl}/api/cep/99999999`);
   assert.equal(missing.status, 404);
 }));
+
+test('POST sem corpo é validação controlada e não cria registro', () => withServer(async ({ baseUrl, database }) => {
+  const response = await fetch(`${baseUrl}/servicos`, { method: 'POST' });
+  assert.equal(response.status, 422);
+  assert.equal(database.indicators().total, 0);
+}));
+
+test('JSON malformado ou grande retorna 400/413 em vez de erro interno', () => withServer(async ({ baseUrl, database }) => {
+  const malformed = await fetch(`${baseUrl}/servicos`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{' });
+  assert.equal(malformed.status, 400);
+  const large = await fetch(`${baseUrl}/servicos`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ nome: 'a'.repeat(15000) }) });
+  assert.equal(large.status, 413);
+  assert.equal(database.indicators().total, 0);
+}));

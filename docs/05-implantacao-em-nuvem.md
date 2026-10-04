@@ -2,7 +2,7 @@
 
 ## Estado
 
-O projeto está conteinerizado e pronto para homologação. Este documento não declara que exista uma instância pública ativa.
+Existe configuração de contêiner para demonstração e construção na CI. A versão 0.1.2 foi validada localmente com dados sintéticos; isso não homologa implantação em nuvem. Não há instância pública comprovada. Autenticação, moderação, limitação/cache da API de CEP, privacidade e operação são bloqueios antes de abrir o serviço à internet.
 
 ## Requisitos da plataforma
 
@@ -14,7 +14,7 @@ O projeto está conteinerizado e pronto para homologação. Este documento não 
 
 ## Variáveis
 
-| Variável | Produção recomendada |
+| Variável | Homologação controlada |
 |---|---|
 | `PORT` | definida pela plataforma |
 | `DATABASE_PATH` | `/app/data/nexo.db` |
@@ -24,9 +24,9 @@ O projeto está conteinerizado e pronto para homologação. Este documento não 
 ## Homologação local do contêiner
 
 ```bash
-docker build -t nexo:0.1.0 .
+docker build -t nexo:0.1.2 .
 docker volume create nexo-data
-docker run --rm -p 3001:3001 -v nexo-data:/app/data nexo:0.1.0
+docker run --rm -p 127.0.0.1:3001:3001 -v nexo-data:/app/data nexo:0.1.2
 curl http://localhost:3001/health
 ```
 

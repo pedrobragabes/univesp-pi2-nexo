@@ -9,7 +9,9 @@ export class ViaCepError extends Error {
 }
 
 export function normalizeCep(value) {
-  return String(value ?? '').replace(/\D/g, '');
+  if (typeof value !== 'string') return '';
+  const trimmed = value.trim();
+  return /^\d{5}-?\d{3}$/.test(trimmed) ? trimmed.replace('-', '') : '';
 }
 
 export function createViaCepClient({ fetchImpl = globalThis.fetch, timeoutMs = 4000 } = {}) {
@@ -42,7 +44,14 @@ export function createViaCepClient({ fetchImpl = globalThis.fetch, timeoutMs = 4
       } catch (error) {
         throw new ViaCepError('UNAVAILABLE', 'O serviço de CEP retornou uma resposta inválida.', error);
       }
-      if (data.erro) throw new ViaCepError('NOT_FOUND', 'CEP não encontrado.');
+      if (!data || typeof data !== 'object' || Array.isArray(data)) throw new ViaCepError('UNAVAILABLE', 'O serviço de CEP retornou uma resposta inválida.');
+      if (data.erro === true || data.erro === 'true') throw new ViaCepError('NOT_FOUND', 'CEP não encontrado.');
+      const stringFields = ['logradouro', 'complemento', 'bairro', 'localidade', 'ibge'];
+      if (normalizeCep(data.cep) !== cep || typeof data.localidade !== 'string' || !data.localidade.trim() ||
+          typeof data.uf !== 'string' || !/^[A-Z]{2}$/.test(data.uf) ||
+          stringFields.some((field) => data[field] !== undefined && typeof data[field] !== 'string')) {
+        throw new ViaCepError('UNAVAILABLE', 'O serviço de CEP retornou uma resposta inválida.');
+      }
 
       return {
         cep: normalizeCep(data.cep),
