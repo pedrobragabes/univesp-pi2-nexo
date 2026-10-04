@@ -1,4 +1,16 @@
-# Revisão de código - versão 0.1.0
+# Revisão de código - versão 0.1.2
+
+## Incremento verificado em 04/10/2026
+
+- Resposta atrasada de CEP e edição manual durante a consulta: cancelamento, sequência da requisição e comparação dos campos impedem misturar endereços. Os dois cenários falharam antes da correção e passaram depois em navegador.
+- Entrada e serviço externo: corpo ausente ou malformado não provoca erro interno nem gravação; JSON inválido recebe 400 e excesso de tamanho 413. CEP de tipo/formato inválido não chama o provedor. Respostas sem objeto, cidade/UF válidas ou com CEP divergente recebem erro controlado.
+- Melhoria progressiva: conteúdo permanece visível quando o JavaScript está desativado; cadastro continua disponível por formulário HTML. O destaque animado passou a ser um complemento visual.
+- Acessibilidade: contraste das letras da marca corrigido e destino do atalho de conteúdo focalizável. Quatro páginas em 320 px sem overflow horizontal e sem violações Axe nos estados examinados.
+- Dependências: qs 6.16.0 e correção compatível de brace-expansion; audit completo e de produção sem alertas conhecidos nesta execução.
+
+Validação: 16 testes Node, 11 testes Playwright, quatro análises Axe e checagem sintática. Os testes usam dados sintéticos e ViaCEP simulado. A análise automática não atesta conformidade completa nem validação acadêmica com participantes.
+
+Os achados da fundação abaixo permanecem como histórico; os riscos de produção continuam abertos.
 
 ## Escopo
 

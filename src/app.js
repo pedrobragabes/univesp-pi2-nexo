@@ -17,6 +17,7 @@ function isHttpUrl(value) {
 }
 
 function validate(body) {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) body = {};
   const item = {
     nome: clean(body.nome), descricao: clean(body.descricao), categoria: clean(body.categoria),
     cep: normalizeCep(body.cep), logradouro: clean(body.logradouro), numero: clean(body.numero),
@@ -79,9 +80,9 @@ export function createApp({ database, viaCep }) {
   app.set('view engine', 'ejs');
   app.set('views', resolve(projectRoot, 'views'));
   app.use(addSecurityHeaders);
+  app.use(rejectCrossSiteWrites);
   app.use(express.urlencoded({ extended: false, limit: '30kb' }));
   app.use(express.json({ limit: '10kb' }));
-  app.use(rejectCrossSiteWrites);
   app.use(express.static(resolve(projectRoot, 'public'), {
     maxAge: process.env.NODE_ENV === 'production' ? '1h' : 0,
   }));
@@ -147,8 +148,12 @@ export function createApp({ database, viaCep }) {
 
   app.use((req, res) => res.status(404).render('404', { title: 'Página não encontrada' }));
   app.use((error, req, res, next) => {
-    console.error(error);
     if (res.headersSent) return next(error);
+    if (error.type === 'entity.parse.failed' || error.type === 'entity.too.large') {
+      const status = error.type === 'entity.too.large' ? 413 : 400;
+      return res.status(status).send(status === 413 ? 'O formulário excede o limite de envio.' : 'O corpo da requisição é inválido.');
+    }
+    console.error('Falha interna ao processar a requisição.');
     res.status(500).render('500', { title: 'Erro interno' });
   });
 

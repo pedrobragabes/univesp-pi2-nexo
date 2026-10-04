@@ -1,6 +1,12 @@
 const cepInput = document.querySelector('[data-cep]');
 const lookupButton = document.querySelector('[data-cep-lookup]');
 const status = document.querySelector('[data-cep-status]');
+let lookupSequence = 0;
+let pendingLookup;
+const addressFields = ['logradouro', 'bairro', 'cidade', 'uf'];
+function addressSnapshot() {
+  return addressFields.map((name) => document.querySelector(`[name="${name}"]`)?.value || '');
+}
 
 function setStatus(message, kind = '') {
   if (!status) return;
@@ -31,18 +37,31 @@ async function lookupCep() {
     return;
   }
 
+  const sequence = ++lookupSequence;
+  pendingLookup?.abort();
+  const controller = new AbortController();
+  pendingLookup = controller;
+  const originalAddress = JSON.stringify(addressSnapshot());
+  const timer = setTimeout(() => controller.abort(), 10000);
   lookupButton.disabled = true;
   setStatus('Consultando endereço…', 'loading');
   try {
-    const response = await fetch(`/api/cep/${cep}`, { headers: { accept: 'application/json' } });
+    const response = await fetch(`/api/cep/${cep}`, { headers: { accept: 'application/json' }, signal: controller.signal });
     const data = await response.json();
+    if (sequence !== lookupSequence || cepInput.value.replace(/\D/g, '') !== cep) return;
     if (!response.ok) throw new Error(data.error || 'Consulta indisponível.');
+    if (!data || data.cep !== cep || addressFields.some((name) => typeof data[name] !== 'string')) throw new Error('A consulta retornou um endereço inválido. Preencha manualmente ou tente novamente.');
+    if (JSON.stringify(addressSnapshot()) !== originalAddress) {
+      setStatus('Campos de endereço alterados durante a consulta. Sua edição foi preservada; consulte novamente para preencher.', 'error');
+      return;
+    }
     fillAddress(data);
     setStatus('Endereço localizado. Confira e complete os campos.', 'success');
   } catch (error) {
-    setStatus(error.message, 'error');
+    if (sequence === lookupSequence) setStatus(error.name === 'AbortError' ? 'A consulta demorou demais. Preencha manualmente ou tente novamente.' : error.message, 'error');
   } finally {
-    lookupButton.disabled = false;
+    clearTimeout(timer);
+    if (sequence === lookupSequence) { lookupButton.disabled = false; pendingLookup = undefined; }
   }
 }
 
@@ -50,7 +69,12 @@ if (cepInput && lookupButton) {
   cepInput.addEventListener('input', () => {
     const digits = cepInput.value.replace(/\D/g, '').slice(0, 8);
     cepInput.value = digits.length > 5 ? `${digits.slice(0, 5)}-${digits.slice(5)}` : digits;
-    setStatus('');
+    const wasPending = Boolean(pendingLookup);
+    lookupSequence++;
+    pendingLookup?.abort();
+    pendingLookup = undefined;
+    lookupButton.disabled = false;
+    setStatus(wasPending ? 'CEP alterado. Consulte novamente para preencher o endereço atual.' : '');
   });
   lookupButton.addEventListener('click', lookupCep);
 }

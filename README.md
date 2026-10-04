@@ -10,7 +10,7 @@ O **Nexo** é um protótipo de catálogo acessível para descoberta de serviços
 
 | Dimensão | Situação |
 |---|---|
-| fundação técnica | concluída, com 11 testes e release `v0.1.0-foundation` |
+| fundação técnica | versão 0.1.2, com 16 testes Node e 11 testes de navegador; release histórica `v0.1.0-foundation` |
 | entrega acadêmica | pendente de parceiro, pesquisa, validação, relatório e vídeo |
 | dados | três registros fictícios identificados |
 | nuvem | configuração de contêiner pronta; homologação real ainda não executada |
@@ -32,7 +32,7 @@ O **Nexo** é um protótipo de catálogo acessível para descoberta de serviços
 Requer Node.js 22.5 ou superior. Após clonar o repositório e entrar em sua pasta:
 
 ```powershell
-npm install
+npm ci
 npm start
 ```
 
@@ -50,15 +50,22 @@ npm start
 ```powershell
 npm run check
 npm test
+npx playwright install chromium
+npm run test:e2e
+npm audit
 ```
 
-Os testes utilizam SQLite em memória e um cliente ViaCEP simulado. Eles não acessam a internet nem alteram o banco local.
+Os testes utilizam SQLite em memória e um cliente ViaCEP simulado. Eles não consultam a API externa nem alteram o banco local. A instalação das dependências e do Chromium exige download. O servidor de navegador fica somente em `127.0.0.1:3484` e é encerrado pelo Playwright.
+
+São 16 testes de backend e 11 testes de navegador: preenchimento por CEP, respostas atrasadas, preservação de edição manual, falha externa, cadastro escapado e navegação sem JavaScript em desktop e celular; além das quatro páginas em 320 px com análise Axe e atalho de teclado. Os resultados de 04/10/2026 estão no [relatório técnico parcial](docs/03-relatorio-parcial.md). Verificação automática não substitui avaliação com participantes.
 
 ## Integração ViaCEP
 
 O servidor consulta `https://viacep.com.br/ws/{cep}/json/` após validar oito dígitos. CEP válido mas inexistente é tratado como `404`; formato inválido como `400`; timeout ou falha externa como `503`. O navegador chama apenas `/api/cep/:cep`, mantendo o contrato externo concentrado no backend.
 
 O ViaCEP alerta que uso massivo pode causar bloqueio. Esta integração serve ao preenchimento pontual do formulário e não deve ser usada para validar bases em lote.
+
+Somente strings com oito dígitos, com ou sem hífen após o quinto, são aceitas no backend. Respostas com estrutura ou CEP divergentes retornam indisponibilidade. Uma resposta atrasada não sobrescreve um CEP novo nem campos de endereço editados durante a consulta. O formulário permite preenchimento manual quando a consulta falha.
 
 ## Limites acadêmicos e éticos
 
